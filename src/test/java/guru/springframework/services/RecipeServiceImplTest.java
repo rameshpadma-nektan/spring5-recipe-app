@@ -7,16 +7,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**
  * Created by jt on 6/17/17.
  */
+
 public class RecipeServiceImplTest {
 
     RecipeServiceImpl recipeService;
@@ -47,6 +52,22 @@ public class RecipeServiceImplTest {
 
         assertEquals(recipes.size(), 1);
         verify(recipeRepository, times(3)).findAll();
+    }
+
+    @Test
+    public void getRecipeByIdTest() throws Exception{
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(1L)).thenReturn(recipeOptional);
+
+        Recipe recipeReturned = recipeService.findById(1L);
+        assertNotNull("Null recipe returned",recipeReturned);
+        verify(recipeRepository,times(1)).findById(anyLong());
+        verify(recipeRepository,never()).findAll();
+
     }
 
 }
